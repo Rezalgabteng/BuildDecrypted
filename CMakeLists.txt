@@ -3,12 +3,13 @@ project(BuildDecrypted)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -pthread -Wall -Wextra")
 
-# Compiler flags for Android compatibility
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--no-undefined -Wl,--as-needed")
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--allow-shlib-undefined")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--allow-shlib-undefined")
+# Base flags
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -pthread -Wall -Wextra")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-strict-aliasing -Wno-error=format")
+
+# Ignore undefined reference errors from Android library
+set(CMAKE_EXE_LINKER_FLAGS "-Wl,--undefined=__errno -Wl,--allow-shlib-undefined")
 
 # Source files
 set(SOURCES
@@ -35,6 +36,7 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/libparadise_api.a")
     
     message(STATUS "Linking against local libparadise_api.a")
     message(STATUS "Note: libparadise_api.a compiled for Android")
+    message(STATUS "Warning: Ignoring undefined __errno symbol")
 else()
     message(WARNING "libparadise_api.a not found - linking may fail")
     message(WARNING "Ensure libparadise_api.a is in project root")
