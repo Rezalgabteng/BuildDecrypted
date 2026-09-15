@@ -5,6 +5,11 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -pthread -Wall -Wextra")
 
+# Compiler flags for Android compatibility
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--no-undefined -Wl,--as-needed")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--allow-shlib-undefined")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--allow-shlib-undefined")
+
 # Source files
 set(SOURCES
     main.cpp
@@ -28,12 +33,8 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/libparadise_api.a")
     target_link_libraries(decrypt_engine PRIVATE 
         ${CMAKE_CURRENT_SOURCE_DIR}/libparadise_api.a)
     
-    # Allow unresolved symbols (compiled for Android, running on Ubuntu)
-    set_target_properties(decrypt_engine PROPERTIES
-        LINK_FLAGS "-Wl,--allow-shlib-undefined")
-    
     message(STATUS "Linking against local libparadise_api.a")
-    message(STATUS "Note: libparadise_api.a compiled for Android - allowing unresolved symbols")
+    message(STATUS "Note: libparadise_api.a compiled for Android")
 else()
     message(WARNING "libparadise_api.a not found - linking may fail")
     message(WARNING "Ensure libparadise_api.a is in project root")
