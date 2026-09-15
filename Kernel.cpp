@@ -7,6 +7,7 @@
 #include "Kernel.hpp"
 #include <cstdio>
 #include <cstdlib>
+#include <unistd.h>
 
 // Global driver instance
 paradise_driver* g_driver = nullptr;
@@ -77,6 +78,9 @@ int Kernel::hwbp_bp_get_info(int bp_id, hwbp_bp_info& info) {
     // Fill hwbp_bp_info from record
     info.hit_count = record.hit_count;
     info.has_snapshot = true;
+    info.external_clear_count = 0;
+    info.dfi_restore_count = 0;
+    info.mdscr_restore_count = 0;
     
     // Copy X0-X31 registers
     info.x[0] = record.x0;
